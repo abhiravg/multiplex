@@ -1,0 +1,88 @@
+mnist/
+- mnist.yaml
+- mnist.py
+-/train
+  - train.py
+  - train.yaml
+  -/config
+    -loss/
+	-mse.yml
+	-
+    -optim/
+    -model/
+	-unet.yaml
+	-conv.yaml
+    .......
+-/test
+
+python3 mnist.py train -h
+
+for more info do [train/test] ...
+
+
+
+python3 mnist.py train loss.mse.alpha=5 model=unet ...
+-> subparsers
+
+
+
+
+mnist.yaml:
+
+programs: 
+	-name: train
+		-location: /mnt/sd1/.../train.py
+	-name: test
+		-loc
+
+
+train.yaml:
+	loss: mse
+	model: ...
+
+
+
+
+
+
+
+from multiplex import config
+
+config()
+
+
+
+
+
+
+
+
+
+
+
+
+git -h 
+merge/pull/push
+
+git merge -h
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 

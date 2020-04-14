@@ -1,0 +1,11 @@
+argparse:
+  - name_or_flags: operation
+    choices: [add, sub, mul, mod]
+    help: 'what operation to perform'
+  - name_or_flags: value1
+    type: float
+    help: 'first value'
+  - name_or_flags: value2
+    type: float
+    help: 'second value'
+

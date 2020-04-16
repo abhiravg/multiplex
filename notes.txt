@@ -6,8 +6,7 @@ mnist/
   - train.yaml
   -/config
     -loss/
-	-mse.yml
-	-
+	-mse.yaml
     -optim/
     -model/
 	-unet.yaml
@@ -25,6 +24,10 @@ python3 mnist.py train loss.mse.alpha=5 model=unet ...
 -> subparsers
 
 
+Argument Resolution Order:
+- File first,
+- Second folder
+- ...
 
 
 mnist.yaml:

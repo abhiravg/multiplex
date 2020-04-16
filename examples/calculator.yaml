@@ -1,6 +1,8 @@
 argparse:
   - name_or_flags: operation
     choices: [add, sub, mul, mod]
+    # Note: python's divisions called are truediv and floordiv,
+    # Try them out above!
     help: 'what operation to perform'
   - name_or_flags: value1
     type: float

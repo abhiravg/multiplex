@@ -1,3 +1,4 @@
+import os
 from copy import deepcopy
 
 import argparse
@@ -10,18 +11,23 @@ class Multiplexor:
     def __init__(self, config_or_path, argparse_key='argparse', dotlist_sep='.'):
         if issubclass(type(config_or_path), DotListConfig):
             self.full_config = config_or_path
+        elif issubclass(type(config_or_path), dict):
+            self.full_config = DotListConfig(config_or_path)
+        elif issubclass(type(config_or_path), str):
+            if os.path.exists(config_or_path):
+                self.full_config = DotListConfig.from_path(config_or_path)
+            else:
+                self.full_config = DotListConfig.from_text(config_or_path, 'yaml')
         else:
-            self.full_config = self.load_conf(config_or_path)
+            raise ValueError("Config needs to be either: a path to a valid config,"
+                             "a dictionary or DotListConfig object, or a string.")
+
         self.dotlist_sep, self.argparse_key = dotlist_sep, argparse_key
 
     @staticmethod
     def get_type_from_str(type_name):
         # TODO: Not safe, this can execute eval
         return getattr(builtins, type_name)
-
-    @staticmethod
-    def load_conf(config_path):
-        return DotListConfig.from_path(config_path)
 
     def to_nested_dict(self, d):
         new = {}
@@ -57,7 +63,7 @@ class Multiplexor:
     def get_default_conf(self):
         data = deepcopy(self.full_config.data)
         if isinstance(data, dict):
-            data.pop(self.argparse_key)
+            data.pop(self.argparse_key, [])
         return DotListConfig(data)
 
     def get_conf(self, *args, **kwargs):
@@ -104,6 +110,7 @@ class Multiplexor:
             # Add argument to parser
             parser.add_argument(*names, **arg_def)
         return parser
+
 
 # parser = argparse.ArgumentParser()
 # m = Multiplexor('config.yaml')

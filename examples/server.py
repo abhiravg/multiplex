@@ -2,7 +2,7 @@
 # multiplex is pip-installed, this ensures it uses the local copy)
 import os
 import sys
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from multiplex.parser import Multiplexor
 
 from flask import Flask

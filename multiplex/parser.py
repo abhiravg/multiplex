@@ -67,7 +67,10 @@ class Multiplexor:
         return DotListConfig(data)
 
     def get_conf(self, *args, **kwargs):
-        return self.get_default_conf() + self.get_cli_conf(*args, **kwargs)
+        default_conf = self.get_default_conf()
+        cli_conf = self.get_cli_conf(*args, **kwargs)
+        final_conf = default_conf + cli_conf
+        return final_conf
 
     def add_default_arguments(self, parser):
         group = parser.add_argument_group('default parameters')
@@ -111,6 +114,22 @@ class Multiplexor:
             parser.add_argument(*names, **arg_def)
         return parser
 
+#    def list_commands(self):
+#         rv = []
+#         self.get_cli_conf()
+#         program_name = args.data.get('programs')
+#         if program_name.endswith('.py'):
+#                 #rv.append(program_name[:-3])
+#             rv.append(program_name)
+#         #rv.sort
+#         return rv
+
+    def run_command(self, args):
+        program_file = args.data.get('programs')
+        with open(program_file) as f:
+            code = compile(f.read(), program_file, 'exec')
+            eval(code, args.data)
+        return
 
 # parser = argparse.ArgumentParser()
 # m = Multiplexor('config.yaml')

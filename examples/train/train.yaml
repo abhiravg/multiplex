@@ -1,0 +1,30 @@
+argparse:
+    - name_or_flags: log_path
+      type: str
+      default: False
+      nargs: '?'
+      help: 'specify a log file to use'
+
+    - name_or_flags: ['-s', '--seed']
+      type: int
+      default: 0
+      help: 'random seed for reproducibility'
+      dest: seed
+      choices: [0, -1, 1]
+
+    - name_or_flags: ['-f', '--load']
+      dest: 'load_path'
+      type: str
+      default: False
+      metavar: file
+      help: 'load model from a .pth file'
+
+    - name_or_flags: ['-v', '--validate']
+      action: 'store_true'
+      help: 'find validation loss on model'
+      
+    - name_or_flags: ['-e', '--epoch']
+      type: int
+      default: 10
+      help: 'Number of epochs for training'
+      dest: epoch

@@ -201,3 +201,4 @@ You can view these examples in the [examples](examples) directory.
 ## Changelog
 
 * April 14, 2020: Refactored codebase into `multiplex/config` and `multiplex/parser`, added calculator example.
+* April 22, 2020: Added support for running subprograms entered through command line using eval, added a simple example program   sample_ML_program.py

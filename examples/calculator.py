@@ -3,12 +3,8 @@ import operator
 # Default using argparse
 import argparse
 
-# Improved using multiplex (the path manipulation should be removed once
-# multiplex is pip-installed, this ensures it uses the local copy)
-import os
-import sys
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from multiplex.parser import Multiplexor
+# Improved using multiplex
+from multiplex import Multiplexor
 
 
 def calculator(value1, value2, operation):

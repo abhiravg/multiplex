@@ -206,5 +206,6 @@ You can view these examples in the [examples](examples) directory.
     * Changed the examples accordingly, they now import from `multiplex` directly. 
     * Added `__init__.py` to enable simplified imports
 (i.e: `from multiplex.parser import Multiplexor` is now `from multiplex import Multiplexor`) 
+* April 22, 2020: Added support for running subprograms entered through command line using eval, added a simple example program   sample_ML_program.py
 * April 16, 2020: Added flask example.
 * April 14, 2020: Refactored codebase into `multiplex/config` and `multiplex/parser`, added calculator example.

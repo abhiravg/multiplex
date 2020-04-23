@@ -205,6 +205,11 @@ You can view these examples in the [examples](examples) directory.
 ## Changelog
 
 * April 23, 2020:
+    * Add outline of how to perform subprogram dispatching in an [mnist example](examples/mnist/mnist.py).
+    It seems to work as a proof of concept. We need to perform this dynamically based on a config. This 
+    method relies heavily on `parse_known_args` to simulate dynamic dispatching, as well 
+    as dynamic package imports based on `importlib` (standard library) and registration 
+    decorators defines in [utils](multiplex/utils.py).
     * Move argparse parser creation logic to [`ArgparseEngine`](multiplex/engines.py).
     * Add capabilities to create custom parser object as well, see the new calculator example.
 * April 22, 2020: 

@@ -1,13 +1,15 @@
 argparse:
-  - name_or_flags: operation
-    choices: [add, sub, mul, mod]
-    # Note: python's divisions called are truediv and floordiv,
-    # Try them out above!
-    help: 'what operation to perform'
-  - name_or_flags: value1
-    type: float
-    help: 'first value'
-  - name_or_flags: value2
-    type: float
-    help: 'second value'
-
+  parser:
+    description: 'Simple Calculator CLI'
+  arguments:
+    - name_or_flags: operation
+      choices: [add, sub, mul, mod]
+      # Note: python's divisions called are truediv and floordiv,
+      # Try them out above!
+      help: 'what operation to perform'
+    - name_or_flags: value1
+      type: float
+      help: 'first value'
+    - name_or_flags: value2
+      type: float
+      help: 'second value'

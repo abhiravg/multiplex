@@ -17,7 +17,7 @@ you can generate a simple CLI from it. Here's a simple example using flask:
 
 ```python
 from flask import Flask
-from multiplex.parser import Multiplexor
+from multiplex import Multiplexor
 
 app = Flask(__name__)
 
@@ -147,22 +147,26 @@ file containing something like the following:
 
 ```yaml
 argparse:
-  - name_or_flags: operation
-    choices: [add, sub]
-    help: 'what operation to perform'
-  - name_or_flags: value1
-    type: float
-    help: 'first value'
-  - name_or_flags: value2
-    type: float
-    help: 'second value'
+  parser:
+    description: 'Simple Calculator CLI'
+  arguments:
+    - name_or_flags: operation
+      choices: [add, sub]
+      help: 'what operation to perform'
+    - name_or_flags: value1
+      type: float
+      help: 'first value'
+    - name_or_flags: value2
+      type: float
+      help: 'second value'
+
 ```
 
 And replace the whole argparse CLI creation with an automated one:
 
 ```python
 if __name__ == "__main__":
-    from multiplex.parser import Multiplexor
+    from multiplex import Multiplexor
 
     m = Multiplexor('calculator.yaml')
     args = m.get_conf()
@@ -200,12 +204,21 @@ You can view these examples in the [examples](examples) directory.
 
 ## Changelog
 
+* April 23, 2020:
+    * Add outline of how to perform subprogram dispatching in an [mnist example](examples/mnist/mnist.py).
+    It seems to work as a proof of concept. We need to perform this dynamically based on a config. This 
+    method relies heavily on `parse_known_args` to simulate dynamic dispatching, as well 
+    as dynamic package imports based on `importlib` (standard library) and registration 
+    decorators defines in [utils](multiplex/utils.py).
+    * Move argparse parser creation logic to [`ArgparseEngine`](multiplex/engines.py).
+    * Add capabilities to create custom parser object as well, see the new calculator example.
 * April 22, 2020: 
-    * Added basic `setup.py` to enable local install of package. 
+    * Add basic `setup.py` to enable local install of package. 
     To do this, run `pip3 install -e path/to/multiplex`. 
-    * Changed the examples accordingly, they now import from `multiplex` directly. 
-    * Added `__init__.py` to enable simplified imports
+    * Change the examples accordingly, they now import from `multiplex` directly. 
+    * Add `__init__.py` to enable simplified imports
 (i.e: `from multiplex.parser import Multiplexor` is now `from multiplex import Multiplexor`) 
 * April 22, 2020: Added support for running subprograms entered through command line using eval, added a simple example program   sample_ML_program.py
 * April 16, 2020: Added flask example.
 * April 14, 2020: Refactored codebase into `multiplex/config` and `multiplex/parser`, added calculator example.
+

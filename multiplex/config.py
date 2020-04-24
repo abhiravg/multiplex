@@ -1,9 +1,13 @@
 from configurator import Config
+from configurator.node import ConfigNode
 
 
 class DotListConfig(Config):
     def __init__(self, data=None, dotlist_sep='.'):
-        super().__init__(data=data)
+        if type(data) is ConfigNode or type(data) is DotListConfig:
+            super().__init__(data=data.data)
+        else:
+            super().__init__(data=data)
         self.dotlist_sep = dotlist_sep
 
     def __getitem__(self, item):

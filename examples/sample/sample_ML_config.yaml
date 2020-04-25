@@ -7,10 +7,12 @@ cpu:
     threads: 1
 
 
-programs: [C:/Users/Rocil/eclipse-workspace/multiplex/examples/train/train.py, C:/Users/Rocil/eclipse-workspace/multiplex/examples/test/test.py]
-
+programs: [train.py, test.py]
 
 argparse:
+  parser:
+    description: 'Simple ML Program'
+  arguments:
     - name_or_flags: log_path
       type: str
       default: False

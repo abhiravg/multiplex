@@ -44,9 +44,14 @@ class Multiplexor:
         parser = self.add_default_arguments(parser)
         return parser
 
+    def get_nested_conf(self,unknown_args):
+        print(unknown_args)
+
     def get_cli_conf(self, parser=None, args=None, namespace=None):
         parser = self.get_parser(parser)
-        cli_conf = vars(parser.parse_args(args, namespace))
+        cli_conf, unknown_args = parser.parse_known_args(args, namespace)
+        cli_conf = vars(cli_conf)
+        #cli_conf = vars(parser.parse_args(args, namespace))
         cli_conf = to_nested_dict(cli_conf)
         return DotListConfig(cli_conf)
 

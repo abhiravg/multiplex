@@ -1,10 +1,7 @@
 argparse:
-    - name_or_flags: log_path
-      type: str
-      default: False
-      nargs: '?'
-      help: 'specify a log file to use'
-
+  parser:
+    description: 'Train Config'
+  arguments:
     - name_or_flags: ['-s', '--seed']
       type: int
       default: 0

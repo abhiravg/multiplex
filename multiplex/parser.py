@@ -9,7 +9,7 @@ from .utils import to_nested_dict
 
 
 class Multiplexor:
-    def __init__(self, config_or_path, argparse_key='argparse', dotlist_sep='.'):
+    def __init__(self, config_or_path, argparse_key='argparse', subprogram_key='subprograms', dotlist_sep='.'):
         if issubclass(type(config_or_path), DotListConfig):
             self.full_config = config_or_path
         elif issubclass(type(config_or_path), dict):
@@ -23,17 +23,19 @@ class Multiplexor:
             raise ValueError("Config needs to be either: a path to a valid config,"
                              "a dictionary or DotListConfig object, or a string.")
 
-        self.dotlist_sep, self.argparse_key = dotlist_sep, argparse_key
-        self.default_conf, self.argparse_conf = self.split_conf()
+        self.dotlist_sep = dotlist_sep
+        self.argparse_key, self.subprogram_key = argparse_key, subprogram_key
+        self.default_conf, self.argparse_conf, self.subprogram_conf = self.split_conf()
 
     def split_conf(self):
         data = deepcopy(self.full_config.data)
         if isinstance(data, dict):
             argparse_conf = data.pop(self.argparse_key, [])
+            subprogram_conf = data.pop(self.subprogram_key, [])
         else:
-            argparse_conf = None
+            argparse_conf, subprogram_conf = None, None
         default_conf = DotListConfig(data)
-        return default_conf, argparse_conf
+        return default_conf, argparse_conf, subprogram_conf
 
     def get_parser(self, parser=None):
         if self.argparse_conf:
@@ -55,11 +57,9 @@ class Multiplexor:
 
     def add_default_arguments(self, parser):
         group = parser.add_argument_group('default parameters')
-        for arg in self.full_config.keys():
-            if arg.startswith(self.argparse_key):
-                continue
+        for arg in self.default_conf.keys():
             arg_name = f'--{arg.replace(" ", "_")}'
             value = self.full_config[arg]
             group.add_argument(arg_name, default=value, dest=arg,
-                               help=f"default is {repr(value)}", metavar='')
+                               help=f"default is {repr(value.data)}", metavar='')
         return parser

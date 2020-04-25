@@ -34,8 +34,8 @@ class ArgparseEngine:
     def __init__(self, argparse_conf, parser_key='parser', args_key='arguments'):
         self.argparse_conf = argparse_conf
         self.parser_key, self.args_key = parser_key, args_key
-        self.parser_conf = DotListConfig(self.argparse_conf[self.parser_key])
-        self.args_conf = DotListConfig(self.argparse_conf[self.args_key])
+        self.parser_conf = DotListConfig(self.argparse_conf.get(self.parser_key))
+        self.args_conf = DotListConfig(self.argparse_conf.get(self.args_key))
 
     @staticmethod
     def get_type_from_str(type_name):

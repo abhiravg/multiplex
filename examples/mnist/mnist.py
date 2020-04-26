@@ -2,6 +2,8 @@
 
 from multiplex import Multiplexor, register_entrypoint
 
+app = Multiplexor(__file__)
+
 
 @register_entrypoint
 def main(args):
@@ -10,5 +12,4 @@ def main(args):
 
 
 if __name__ == '__main__':
-    m = Multiplexor('mnist.yaml')
-    m.execute()
+    app.execute()

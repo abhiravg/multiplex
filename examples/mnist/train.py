@@ -1,15 +1,15 @@
 # Inspired from https://github.com/pytorch/examples/blob/master/mnist/main.py
 
-import argparse
-
 import torch
 import torch.nn.functional as F
 import torch.optim as optim
 from torchvision import datasets, transforms
 from torch.optim.lr_scheduler import StepLR
-from multiplex import register_parser, register_entrypoint
+from multiplex import register_parser, register_entrypoint, Multiplexor
 
 from examples.mnist.utils import init_model
+
+app = Multiplexor(__file__)
 
 
 def train(args, model, device, train_loader, optimizer, scheduler):
@@ -36,20 +36,7 @@ def train_epoch(args, model, device, train_loader, optimizer, epoch):
 
 @register_parser
 def get_parser(parents):
-    parser = argparse.ArgumentParser(description='Training tool for an MNIST network', parents=parents)
-    parser.add_argument('--batch-size', type=int, default=64, metavar='N',
-                        help='input batch size for training (default: 64)')
-    parser.add_argument('--epochs', type=int, default=14, metavar='N',
-                        help='number of epochs to train (default: 14)')
-    parser.add_argument('--lr', type=float, default=1.0, metavar='LR',
-                        help='learning rate (default: 1.0)')
-    parser.add_argument('--gamma', type=float, default=0.7, metavar='M',
-                        help='Learning rate step gamma (default: 0.7)')
-    parser.add_argument('--log-interval', type=int, default=10, metavar='N',
-                        help='how many batches to wait before logging training status')
-    parser.add_argument('--save-model', action='store_true', default=False,
-                        help='For Saving the current Model')
-    return parser
+    return app.get_parser(parents)
 
 
 @register_entrypoint

@@ -55,9 +55,9 @@ class ArgparseEngine:
         if disallowed_keys:
             raise NotImplementedError(f'Some argparse keyword arguments not implemented yet: {disallowed_keys}')
 
-    def get_parser(self):
-        parser = self.get_emtpy_parser()
-        parser = self.add_argparse_arguments(parser)
+    def get_parser(self, parents=None, add_help=True):
+        parser = self.get_emtpy_parser(parents=parents, add_help=add_help)
+        parser = self.add_argparse_arguments(parser, add_help=add_help)
         return parser
 
     def get_emtpy_parser(self, parents=None, add_help=True):

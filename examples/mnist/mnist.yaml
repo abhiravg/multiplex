@@ -1,0 +1,22 @@
+argparse:
+  parser:
+    description: 'PyTorch MNIST Example'
+  arguments:
+    - name_or_flags: ['--no-cuda']
+      action: store_true
+      default: False
+      help: 'disables CUDA training'
+    - name_or_flags: ['--seed']
+      type: int
+      default: 1
+      metavar: 'S'
+      help: 'random seed (default: 1)'
+    - name_or_flags: ["-h", "--help"]
+      action: "help"
+      help: "show this help message and exit"
+
+subprograms:
+  train: train.py
+  test: test.py
+  ab: ab.py
+  

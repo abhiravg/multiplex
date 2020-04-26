@@ -14,8 +14,12 @@ class Multiplexor:
         elif issubclass(type(config_or_path), dict):
             self.full_config = DotListConfig(config_or_path)
         elif issubclass(type(config_or_path), str):
-            if os.path.exists(config_or_path):
-                self.full_config = DotListConfig.from_path(config_or_path)
+            for ext in ('yaml', 'json'):
+                base_path, _ = os.path.splitext(config_or_path)
+                augmented_path = base_path + os.path.extsep + ext
+                if os.path.isfile(augmented_path):
+                    self.full_config = DotListConfig.from_path(augmented_path)
+                    break
             else:
                 self.full_config = DotListConfig.from_text(config_or_path, 'yaml')
         else:
@@ -100,7 +104,7 @@ class Multiplexor:
                 return main_parser.parse_args(), None
         else:
             # No subprograms, proceed normally
-            parser = self.get_main_parser()
+            parser = self._get_main_parser()
             return parser.parse_args(), None
 
     def execute(self):
@@ -110,17 +114,25 @@ class Multiplexor:
         entry_point = get_entrypoint_from_module(subprogram)
         entry_point(args)
 
-    def get_main_parser(self, parser=None):
+    def get_parser(self, parents=None):
+        """This method is intended to get the parser of the final subprogram,
+        it raises an error if the config has a `subprogram` config"""
+        if self.subprogram_conf.data:
+            raise RuntimeError("Can only get parser of leaf program")
+        return self._get_main_parser(self, parents=parents)
+
+    def _get_main_parser(self, parser=None, parents=None):
         if self.argparse_conf.data:
             argparse_engine = ArgparseEngine(self.argparse_conf)
-            parser = argparse_engine.get_parser()
+            parser = argparse_engine.get_parser(parents=parents)
         if parser is None:
-            parser = argparse.ArgumentParser()
+            parents = [] if parents is None else parents
+            parser = argparse.ArgumentParser(parents=parents)
         parser = self.add_default_arguments(parser)
         return parser
 
     def get_cli_conf(self, parser=None, args=None, namespace=None):
-        parser = self.get_main_parser(parser)
+        parser = self._get_main_parser(parser)
         cli_conf = vars(parser.parse_args(args, namespace))
         cli_conf = to_nested_dict(cli_conf)
         return DotListConfig(cli_conf)

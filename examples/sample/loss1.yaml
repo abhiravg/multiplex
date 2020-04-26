@@ -1,0 +1,6 @@
+mse1: {
+        beta1: 0.5,
+        gamma1: 100,
+    }
+banner: default banner
+threads: 1

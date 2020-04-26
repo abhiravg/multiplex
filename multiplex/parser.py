@@ -44,19 +44,53 @@ class Multiplexor:
         parser = self.add_default_arguments(parser)
         return parser
 
-    def get_nested_conf(self,unknown_args):
-        print(unknown_args)
+    def get_subprogram_args(self,subprogram_args):
+        subprogram_args_dict = {}
+        for arg in subprogram_args:
+#             if arg.startswith('--programs'):
+#                 continue
+            params = arg.split("=")
+            if(params[0].startswith("--")):
+                subprogram_args_dict.setdefault(params[0][2:], params[1])
+        return subprogram_args_dict
+
+#     def nested_conf(self, subprogram_args_dict):
+#         nested_conf = {}
+#         for i in range (0, len(subprogram_args_dict)):
+#             nested_conf = nested_conf + self.get_nested_config(subprogram_args_dict[i])
+#         return nested_conf
+
+
+    def get_nested_config(self,subprogram_args_dict):
+        for key, value in subprogram_args_dict.items():
+            file_dir_name = os.path.abspath(key)
+            file_name = file_dir_name + '.yaml'
+            if(os.path.isfile(file_name)):  #Returns true if file
+                m1 = Multiplexor(file_name)
+                final_conf = m1.full_config + DotListConfig(value)
+                return DotListConfig(final_conf)
+            elif(os.path.isdir(file_dir_name)):
+                curr_dir = os.getcwd()
+                os.chdir(file_dir_name)
+                #file_name = file_dir_name +'\\'+ list(value.keys())[0]+'.yaml'
+                final_conf = self.get_nested_config(value)
+                os.chdir(curr_dir)
+                return DotListConfig(final_conf)
 
     def get_cli_conf(self, parser=None, args=None, namespace=None):
         parser = self.get_parser(parser)
         cli_conf, unknown_args = parser.parse_known_args(args, namespace)
         cli_conf = vars(cli_conf)
+        unknown_args = self.get_subprogram_args(unknown_args)
+        unknown_args = to_nested_dict(unknown_args)
         #cli_conf = vars(parser.parse_args(args, namespace))
         cli_conf = to_nested_dict(cli_conf)
-        return DotListConfig(cli_conf)
+        return DotListConfig(cli_conf), unknown_args
 
     def get_conf(self, *args, **kwargs):
-        return self.default_conf + self.get_cli_conf(*args, **kwargs)
+        cli_conf, unknown_args = self.get_cli_conf(*args, **kwargs)
+        return (self.default_conf + cli_conf),unknown_args
+        #return (self.default_conf + self.get_cli_conf(*args, **kwargs))
 
     def add_default_arguments(self, parser):
         group = parser.add_argument_group('default parameters')

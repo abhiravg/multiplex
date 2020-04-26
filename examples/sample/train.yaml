@@ -25,3 +25,9 @@ argparse:
       default: 10
       help: 'Number of epochs for training'
       dest: epoch
+     
+    - name_or_flags: ['-m', '--model']
+      type: str
+      default: covnet
+      help: 'Model for training'
+      dest: model

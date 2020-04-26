@@ -13,8 +13,7 @@ from multiplex import Multiplexor
 if __name__ == "__main__":
     
     m = Multiplexor('sample_ML_config.yaml')
-    args = m.get_conf()
-    #m.run_command(args)
+    args, subprogram_args = m.get_conf()
     if args.data.get('programs'):
         program_path = args.data.get('programs')
         program_path = os.path.abspath(program_path)
@@ -24,4 +23,4 @@ if __name__ == "__main__":
         #subparser.prog = main_parser.prog + ' ' + args.program
         #args = subparser.parse_args(args=unknown_args, namespace=args)
         main = get_entrypoint_from_module(subprogram)
-        main(args)
+        main(args, subprogram_args)

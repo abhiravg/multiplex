@@ -2,37 +2,36 @@ import os
 import sys
 import argparse
 
-from multiplex.parser import Multiplexor
+from multiplex import Multiplexor
 from multiplex import register_parser, register_entrypoint
-from multiplex.config import DotListConfig
-from multiplex.utils import to_nested_dict
+from multiplex import DotListConfig
+from multiplex import to_nested_dict
+from multiplex import import_from_full_path, get_parser_from_module, get_entrypoint_from_module
+
+#subprogram_args :These are the config args passed by the main program, these couldnt be parsed by the main program's config file
+#train_args : These are the arguments that are parsed successfully by the subprogram's config file
+#unknown_args : These are the arguments that couldnt be parsed by the subprogram's config. In addition to
+#               the nested configs, this can also contain args parsed succesfully by the main program(ignore them)
+
 
 @register_entrypoint
-def main(args):
+def main(args, subprogram_args):
     
     m = Multiplexor('C:/Users/Rocil/eclipse-workspace/multiplex/examples/sample/train.yaml')
-    parser_train = m.get_parser()
-    main_args, train_args = parser_train.parse_known_args()
-    unknown_args_dict = get_subprogram_args(train_args)
-    unknown_args_dict = to_nested_dict(unknown_args_dict)
-    print(unknown_args_dict)
+    train_args, unknown_args = m.get_conf()
     
-    for key, value in unknown_args_dict.items():
-        file_dir_name = key + '.yaml'
-        if(os.path.isfile(file_dir_name)):  #Returns true if file, false if AdjacentTempDirectory
-            m1 = Multiplexor(file_dir_name)
-            final_conf = m1.full_config + DotListConfig(value)
-            print(final_conf)
-                    
-def get_subprogram_args(train_args):
-    unknown_args_dict = {}
-    for arg in train_args:
-        if arg.startswith('--programs'):
-            continue
-        params = arg.split("=")
-        if(params[0].startswith("--")):
-            unknown_args_dict.setdefault(params[0][2:], params[1])
-    return unknown_args_dict
+    print("Args passed to the subprogram from the main program: ", subprogram_args)  
+    print("Args parsed from the subprogram config file: ", train_args)  #Subprogram config
+    
+    #TODO : If any of the subprogram_args are present in train_args, remove them from subprogram_args
+    
+    
+    print("Args unparsed from the subprogram config file: ", unknown_args)
+    unknown_args.pop('programs')
+    print("Number of nested args to be parsed is",len(unknown_args))
+    final_conf = m.get_nested_config(unknown_args)
+    print("Args parsed from the nested config files: ", final_conf)
+    print("Args from the parent cli program: ",args)
 
 
 

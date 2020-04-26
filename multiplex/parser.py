@@ -1,6 +1,5 @@
-from copy import deepcopy
-
 import argparse
+from copy import deepcopy
 
 from .config import DotListConfig
 from .engines import ArgparseEngine

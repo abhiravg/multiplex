@@ -3,11 +3,11 @@
 import torch
 import torch.nn.functional as F
 import torch.optim as optim
-from torchvision import datasets, transforms
 from torch.optim.lr_scheduler import StepLR
-from multiplex import register_parser, register_entrypoint, Multiplexor
+from torchvision import datasets, transforms
 
 from examples.mnist.utils import init_model
+from multiplex import register_parser, register_entrypoint, Multiplexor
 
 app = Multiplexor(__file__)
 
@@ -31,7 +31,7 @@ def train_epoch(args, model, device, train_loader, optimizer, epoch):
         if batch_idx % args.log_interval == 0:
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(train_loader.dataset),
-                100. * batch_idx / len(train_loader), loss.item()))
+                       100. * batch_idx / len(train_loader), loss.item()))
 
 
 @register_parser

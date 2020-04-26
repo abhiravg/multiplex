@@ -2,14 +2,14 @@ argparse:
   parser:
     description: 'Training tool for an MNIST network'
   arguments:
-    - name_or_flags: ['--batch-size'] 
+    - name_or_flags: ['--batch-size']
       type: int
-      default: 64 
+      default: 64
       metavar: 'N'
       help: 'input batch size for training (default: 64)'
     - name_or_flags: ['--epochs']
-      type: int 
-      default: 14 
+      type: int
+      default: 14
       metavar: 'N'
       help: 'number of epochs to train (default: 14)'
     - name_or_flags: ['--lr']

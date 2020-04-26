@@ -43,4 +43,3 @@ class DotListConfig(Config):
             return self[item]
         except KeyError:
             return default
-

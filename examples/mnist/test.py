@@ -1,14 +1,13 @@
 # Inspired from https://github.com/pytorch/examples/blob/master/mnist/main.py
 
-import os
 import argparse
 
 import torch
 import torch.nn.functional as F
 from torchvision import datasets, transforms
-from multiplex import register_parser, register_entrypoint
 
 from examples.mnist.utils import init_model
+from multiplex import register_parser, register_entrypoint
 
 
 def test(model, device, test_loader):
@@ -51,8 +50,8 @@ def main(args):
     kwargs = {'num_workers': 1, 'pin_memory': True} if use_cuda else {}
     test_loader = torch.utils.data.DataLoader(
         datasets.MNIST('../data', train=False, transform=transforms.Compose([
-                           transforms.ToTensor(),
-                           transforms.Normalize((0.1307,), (0.3081,))
-                       ])),
+            transforms.ToTensor(),
+            transforms.Normalize((0.1307,), (0.3081,))
+        ])),
         batch_size=args.batch_size, shuffle=True, **kwargs)
     test(model, device, test_loader)

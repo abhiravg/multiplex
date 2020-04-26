@@ -1,5 +1,5 @@
-import os
 import functools
+import os
 from importlib import util
 
 PARSER_GETTERS = {}
@@ -25,6 +25,7 @@ def register_parser(fn):
     @functools.wraps(fn)
     def registered(*args, **kwargs):
         return fn(*args, **kwargs)
+
     return registered
 
 
@@ -58,6 +59,7 @@ def register_entrypoint(fn):
     @functools.wraps(fn)
     def registered(*args, **kwargs):
         return fn(*args, **kwargs)
+
     return registered
 
 
@@ -76,7 +78,7 @@ def import_from_full_path(full_path, module_name=None, submodules_path=None):
     if submodules_path is None:
         submodules_path = os.path.dirname(full_path)
     spec = util.spec_from_file_location(module_name, full_path,
-                                                  submodule_search_locations=submodules_path)
+                                        submodule_search_locations=submodules_path)
     module = util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module

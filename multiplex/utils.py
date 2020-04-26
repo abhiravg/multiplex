@@ -1,6 +1,6 @@
 import os
 import functools
-import importlib
+from importlib import util
 
 PARSER_GETTERS = {}
 SUBPROGRAM_ENTRY_POINTS = {}
@@ -51,9 +51,9 @@ def import_from_full_path(full_path, module_name=None, submodules_path=None):
         module_name, _ = os.path.splitext(os.path.basename(full_path))
     if submodules_path is None:
         submodules_path = os.path.dirname(full_path)
-    spec = importlib.util.spec_from_file_location(module_name, full_path,
+    spec = util.spec_from_file_location(module_name, full_path,
                                                   submodule_search_locations=submodules_path)
-    module = importlib.util.module_from_spec(spec)
+    module = util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
 

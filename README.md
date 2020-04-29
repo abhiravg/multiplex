@@ -203,7 +203,9 @@ More to come!
 You can view these examples in the [examples](examples) directory.  
 
 ## Changelog
-
+* April 28, 2020:
+    * Add support for nested config files
+    * For nested configs of depth > 2, the argument resolution order is as follows: File first, Folder Next
 * April 26, 2020:
     * Infer config filename based on `__file__` for simple cases.
     * Add `parse_args` and `execute` which enable top-level app to 

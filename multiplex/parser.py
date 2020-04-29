@@ -93,7 +93,12 @@ class Multiplexor:
                 subparser.prog = main_parser.prog + ' ' + args.program
                 args = argparse.Namespace(**{k: v for k, v in vars(args).items() if k != 'program'})
 
-                args = subparser.parse_args(args=unknown_args, namespace=args)
+                #args = subparser.parse_args(args=unknown_args, namespace=args)
+                args, subprogram_args = subparser.parse_known_args(args = unknown_args, namespace = args)
+                subprogram_args = self.get_subprogram_args(subprogram_args)
+                subprogram_args = to_nested_dict(subprogram_args)
+                subprogram_args = self.nested_conf(subprogram_args)
+                args.__setattr__('conf', subprogram_args)
                 return args, subprogram
 
             # Otherwise, add help and re-parse all arguments of main program in order to generate
@@ -109,7 +114,7 @@ class Multiplexor:
     def execute(self):
         # TODO: this is currently passing the args as a Namespace. We need to
         #  merge this with default params and pass the args as a config object.
-        args, subprogram = self.parse_args()
+        args, subprogram= self.parse_args()
         entry_point = get_entrypoint_from_module(subprogram)
         entry_point(args)
 
@@ -133,52 +138,44 @@ class Multiplexor:
     def get_subprogram_args(self,subprogram_args):
         subprogram_args_dict = {}
         for arg in subprogram_args:
-#             if arg.startswith('--programs'):
-#                 continue
             params = arg.split("=")
             if(params[0].startswith("--")):
                 subprogram_args_dict.setdefault(params[0][2:], params[1])
         return subprogram_args_dict
 
-#     def nested_conf(self, subprogram_args_dict):
-#         nested_conf = {}
-#         for i in range (0, len(subprogram_args_dict)):
-#             nested_conf = nested_conf + self.get_nested_config(subprogram_args_dict[i])
-#         return nested_conf
-
-
-    def get_nested_config(self,subprogram_args_dict):
+    def nested_conf(self, subprogram_args_dict):
+        nested_conf = {}
+        nested_conf = DotListConfig(nested_conf)
         for key, value in subprogram_args_dict.items():
-            file_dir_name = os.path.abspath(key)
-            file_name = file_dir_name + '.yaml'
-            if(os.path.isfile(file_name)):  #Returns true if file
-                m1 = Multiplexor(file_name)
-                final_conf = m1.full_config + DotListConfig(value)
-                return DotListConfig(final_conf)
-            elif(os.path.isdir(file_dir_name)):
-                curr_dir = os.getcwd()
-                os.chdir(file_dir_name)
-                #file_name = file_dir_name +'\\'+ list(value.keys())[0]+'.yaml'
-                final_conf = self.get_nested_config(value)
-                os.chdir(curr_dir)
-                return DotListConfig(final_conf)
+            nested_conf = nested_conf + self.get_nested_config(key, value)
+        return nested_conf
+
+
+    def get_nested_config(self, key, value):
+        file_dir_name = os.path.abspath(key)
+        file_name = file_dir_name + '.yaml'
+        if(os.path.isfile(file_name)):  #Returns true if file
+            m1 = Multiplexor(file_name)
+            final_conf = m1.full_config + DotListConfig(value)
+            return DotListConfig(final_conf)
+        elif(os.path.isdir(file_dir_name)):
+            curr_dir = os.getcwd()
+            os.chdir(file_dir_name)
+            final_conf = self.get_nested_config(list(value.keys())[0], value[list(value.keys())[0]])
+            os.chdir(curr_dir)
+            return DotListConfig(final_conf)
+        else:
+            raise Exception('Invalid argument %s', key)
+
 
     def get_cli_conf(self, parser=None, args=None, namespace=None):
-#         parser = self.get_parser(parser)
-#         cli_conf, unknown_args = parser.parse_known_args(args, namespace)
-#         cli_conf = vars(cli_conf)
-#         unknown_args = self.get_subprogram_args(unknown_args)
-#         unknown_args = to_nested_dict(unknown_args)
-#         #cli_conf = vars(parser.parse_args(args, namespace))
         parser = self._get_main_parser(parser)
         cli_conf = vars(parser.parse_args(args, namespace))
         cli_conf = to_nested_dict(cli_conf)
-        return DotListConfig(cli_conf) #, unknown_args
+        return DotListConfig(cli_conf)
 
     def get_conf(self, *args, **kwargs):
-        cli_conf, unknown_args = self.get_cli_conf(*args, **kwargs)
-        return (self.default_conf + cli_conf),unknown_args
-        #return (self.default_conf + self.get_cli_conf(*args, **kwargs))
+        return (self.default_conf + self.get_cli_conf(*args, **kwargs))
 
     def add_default_arguments(self, parser):
         group = parser.add_argument_group('default parameters')
@@ -189,25 +186,9 @@ class Multiplexor:
                                help=f"default is {repr(value.data)}", metavar='')
         return parser
 
-#   def list_commands(self):
-#         rv = []
-#         self.get_cli_conf()
-#         program_name = args.data.get('programs')
-#         if program_name.endswith('.py'):
-#                 #rv.append(program_name[:-3])
-#             rv.append(program_name)
-#         #rv.sort
-#         return rv
-
     def run_command(self, args):
         program_file = args.data.get('programs')
         with open(program_file) as f:
             code = compile(f.read(), program_file, 'exec')
             eval(code, args.data)
         return
-
-# parser = argparse.ArgumentParser()
-# m = Multiplexor('config.yaml')
-# args = m.get_conf()
-#
-# print(args)

@@ -14,7 +14,10 @@ class DotListConfig(Config):
         value = super()
         for part in item.split(self.dotlist_sep):
             value = value.__getitem__(part)
-        return value
+        return DotListConfig(value)
+
+    def __getattr__(self, name):
+        return DotListConfig(super().__getattr__(name))
 
     def __add__(self, other):
         other = DotListConfig(other.data)
@@ -34,3 +37,9 @@ class DotListConfig(Config):
         else:
             keys.append(key)
         return keys
+
+    def get(self, item, default=None):
+        try:
+            return self[item]
+        except KeyError:
+            return default

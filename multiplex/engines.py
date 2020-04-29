@@ -1,7 +1,8 @@
-import builtins
 import argparse
+import builtins
 
 from .config import DotListConfig
+
 
 # Note: Currently only argparse is supported, other CLI engines could be added here.
 
@@ -34,8 +35,8 @@ class ArgparseEngine:
     def __init__(self, argparse_conf, parser_key='parser', args_key='arguments'):
         self.argparse_conf = argparse_conf
         self.parser_key, self.args_key = parser_key, args_key
-        self.parser_conf = DotListConfig(self.argparse_conf[self.parser_key])
-        self.args_conf = DotListConfig(self.argparse_conf[self.args_key])
+        self.parser_conf = DotListConfig(self.argparse_conf.get(self.parser_key))
+        self.args_conf = DotListConfig(self.argparse_conf.get(self.args_key))
 
     @staticmethod
     def get_type_from_str(type_name):
@@ -55,24 +56,37 @@ class ArgparseEngine:
         if disallowed_keys:
             raise NotImplementedError(f'Some argparse keyword arguments not implemented yet: {disallowed_keys}')
 
-    def get_parser(self):
-        parser = self.get_emtpy_parser()
-        parser = self.add_argparse_arguments(parser)
+    def get_parser(self, parents=None, add_help=True):
+        parser = self.get_emtpy_parser(parents=parents, add_help=add_help)
+        parser = self.add_argparse_arguments(parser, add_help=add_help)
         return parser
 
-    def get_emtpy_parser(self):
+    def get_emtpy_parser(self, parents=None, add_help=True):
         """Perform step 1 from above, that is, create the emtpy parser object"""
+        parents = [] if parents is None else parents
+
         if self.parser_key not in self.argparse_conf:
-            return argparse.ArgumentParser()
+            return argparse.ArgumentParser(parents=parents, add_help=add_help)
 
         # Validate fields of argparse ArgumentParser
         self.validate_fields(self.parser_conf, 'ArgumentParser')
 
-        return argparse.ArgumentParser(**self.parser_conf.data)
+        # Force remove help
+        if not add_help:
+            self.parser_conf.data.update({'add_help': False})
 
-    def add_argparse_arguments(self, parser):
-        """Performs step 2, add arguments to the created parser"""
-        for arg_def in self.args_conf.data:
+        return argparse.ArgumentParser(**self.parser_conf.data, parents=parents)
+
+    def add_argparse_arguments(self, parser, args_conf=None, add_help=True):
+        """Performs step 2, add arguments to the created parser.
+
+        If add_help is false, capture the argument definition that have a
+        help action and return these as well as the parser."""
+
+        help_arg_defs = []
+        if args_conf is None:
+            args_conf = self.args_conf.data
+        for arg_def in args_conf:
             # Validate fields of argparse add_argument
             self.validate_fields(arg_def, 'add_argument')
 
@@ -89,7 +103,11 @@ class ArgparseEngine:
             if 'type' in arg_def:
                 arg_def['type'] = self.get_type_from_str(arg_def['type'])
 
-            # Add argument to parser
-            parser.add_argument(*names, **arg_def)
+            # Add argument to parser (or skip if not add_help)
+            if not add_help and not is_positional and arg_def.get('action') == 'help':
+                help_arg_defs.append(arg_def)
+            else:
+                parser.add_argument(*names, **arg_def)
+        if not add_help:
+            return parser, help_arg_defs
         return parser
-

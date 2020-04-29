@@ -1,10 +1,11 @@
 import operator
 
-# Default using argparse
-import argparse
-
 # Improved using multiplex
 from multiplex import Multiplexor
+
+
+# Default using argparse
+# import argparse
 
 
 def calculator(value1, value2, operation):

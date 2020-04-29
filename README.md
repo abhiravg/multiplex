@@ -204,6 +204,10 @@ You can view these examples in the [examples](examples) directory.
 
 ## Changelog
 
+* April 26, 2020:
+    * Infer config filename based on `__file__` for simple cases.
+    * Add `parse_args` and `execute` which enable top-level app to 
+    dispatch arguments and execute subprograms dynamically.
 * April 23, 2020:
     * Add outline of how to perform subprogram dispatching in an [mnist example](examples/mnist/mnist.py).
     It seems to work as a proof of concept. We need to perform this dynamically based on a config. This 
@@ -218,7 +222,11 @@ You can view these examples in the [examples](examples) directory.
     * Change the examples accordingly, they now import from `multiplex` directly. 
     * Add `__init__.py` to enable simplified imports
 (i.e: `from multiplex.parser import Multiplexor` is now `from multiplex import Multiplexor`) 
-* April 22, 2020: Added support for running subprograms entered through command line using eval, added a simple example program   sample_ML_program.py
+* April 22, 2020: Added support for running subprograms entered through command line using eval, added a simple example program sample_ML_program.py
 * April 16, 2020: Added flask example.
 * April 14, 2020: Refactored codebase into `multiplex/config` and `multiplex/parser`, added calculator example.
 
+## TODO:
+
+- [ ] Remove subprogram max depth
+- [ ] Add default argument resolution and parsing when using subprograms

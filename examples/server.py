@@ -1,7 +1,6 @@
-# Improved using multiplex
-from multiplex import Multiplexor
-
 from flask import Flask
+
+from multiplex import Multiplexor
 
 app = Flask(__name__)
 

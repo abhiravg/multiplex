@@ -12,16 +12,6 @@ argparse:
       default: 14
       metavar: 'N'
       help: 'number of epochs to train (default: 14)'
-    - name_or_flags: ['--lr']
-      type: float
-      default: 1.0
-      metavar: 'LR'
-      help: 'learning rate (default: 1.0)'
-    - name_or_flags: ['--gamma']
-      type: float
-      default: 0.7
-      metavar: 'M'
-      help: 'Learning rate step gamma (default: 0.7)'
     - name_or_flags: ['--log-interval']
       type: int
       default: 10

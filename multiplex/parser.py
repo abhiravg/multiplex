@@ -140,7 +140,7 @@ class Multiplexor:
         for arg in subprogram_args:
             params = arg.split("=")
             if(params[0].startswith("--")):
-                subprogram_args_dict.setdefault(params[0][2:], params[1])
+                subprogram_args_dict.setdefault(params[0][2:], float(params[1]))
         return subprogram_args_dict
 
     def nested_conf(self, subprogram_args_dict):

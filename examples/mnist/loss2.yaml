@@ -1,8 +1,0 @@
-mse2: {
-        alpha2:{
-        beta2:0,
-        gamma2: 100,
-        }
-    }
-banner2: default banner
-threads2: 1

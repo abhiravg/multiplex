@@ -51,8 +51,8 @@ def main(args):
                        ])),
         batch_size=args.batch_size, shuffle=True, **kwargs)
 
-    optimizer = optim.Adadelta(model.parameters(), lr=args.lr)
-    scheduler = StepLR(optimizer, step_size=1, gamma=args.gamma)
+    optimizer = optim.Adadelta(model.parameters(), lr=args.conf.data.get('lr'))
+    scheduler = StepLR(optimizer, step_size=1, gamma=args.conf.data.get('gamma'))
 
     train(args, model, device, train_loader, optimizer, scheduler)
 
